@@ -46,15 +46,19 @@ FILEFORMATS_EXT = ['gpx', 'tcx', 'kml']
 DEBUG = 1 # Debug output [0,1]
 DEFAUL_ALL_SELECTED = 0 #in tracklist default all items selected? [0,1]
 PS=os.sep
+
+# Defining Android PATH:
 ANDROID_PATH = os.path.abspath(os.path.join(os.sep,'sdcard','oruxmaps','tracklogs','gpsies'))
+# Defining Windows/Linux/Mac Path:
+HOME = os.path.expanduser('~')
+PCPATH = os.path.join(HOME,'public','gps','gpsies')
 
 # ROA = 1
 if ROA:
 	PATH = ANDROID_PATH #if is Android, then set Patheseperator and the path to Oruxmaps.
 	droid = sl4a.Android()
 else:
-	HOME = os.path.expanduser('~')
-	PATH = os.path.join(HOME,'public','gps','gpsies')
+	PATH = PCPATH
 GPSIES_XML_FILE_PATH = os.path.join(PATH,'GPSies.xml')
 APIKEY_FILE_PATH = os.path.join(PATH, 'apikey.txt')
 GPSIES_TRACKS_PATH = os.path.join(PATH,'tracks')
