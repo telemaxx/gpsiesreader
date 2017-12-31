@@ -20,12 +20,12 @@ HOME = os.path.expanduser('~')
 PCPATH = os.path.join(HOME,'public','gps','gpsies')
 ```
 
-## HOWTO install the API Key
+### HOWTO install the API Key
 * at this link you can request an API Key gpsies.com
 * create a empty text File and store the 16 Digit Key to.
 * copy this File to:
 
-## TIP
+### TIP
 instead of using the standard python, use [pypy](https://pypy.org)   
 With pypy the script runs about 5 times faster.   
 startup time is longer, but after that is faster.   
