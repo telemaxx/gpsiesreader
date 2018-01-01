@@ -93,6 +93,7 @@ elif not ROA and errorcode:
 	print('Problem with API Key: %s' % (errorstring))
 	sys.exit(errorcode)
 
+
 def main():
 	global GPSIES_USER
 	selected_Items = 0 # default for non ROA
