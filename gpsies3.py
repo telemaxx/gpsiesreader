@@ -75,11 +75,9 @@ if os.path.isfile(APIKEY_FILE_PATH):
 		apikey = f.readline().strip()
 	if len(apikey) != 16:
 		errorcode = 2
-		errorstring = 'filelength not 16 chr'
-		print(errorstring)
+		errorstring = 'length of %s not 16 char' %  (APIKEY_FILE_PATH)
 else:
 	errorstring = '%s not found' % (APIKEY_FILE_PATH)
-	print(errorstring)
 	errorcode = 1
 
 if ROA and errorcode:
@@ -92,6 +90,7 @@ if ROA and errorcode:
 	dummy = droid.dialogGetResponse().result
 	sys.exit(errorcode)
 elif not ROA and errorcode:
+	print('Problem with API Key: %s' % (errorstring))
 	sys.exit(errorcode)
 
 def main():
