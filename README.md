@@ -9,6 +9,9 @@ This Tool require Python2 , Python3, pypy or QPython(Android)
   * create a shortcut on the Desktop. Target:
   `C:\yourepythonprogrammfolder\python.exe C:\thefolderwhereyousavethefile\gpsies3.py`
   * request an API Key from gpsies.com and save it to the correct folder. Description Somewhere below.
+  * Edit `C:\yourepythonprogrammfolder\python.exe C:\thefolderwhereyousavethefile\gpsies3.py`
+  and set `GPSIES_USER=` to youre GPSies username
+
 ### HOWTO USE
 ##### On PC, just doubleclick the Shortcut
 The Files are stored at the location defined in gpsies3.py
@@ -21,9 +24,9 @@ PCPATH = os.path.join(HOME,'public','gps','gpsies')
 ```
 
 ### HOWTO install the API Key
-* at this link you can request an API Key gpsies.com
+* at http://www.gpsies.com you can request an API Key:
 * create a empty text File and store the 16 Digit Key to.
-* copy this File to:
+* copy this File to the path defined above, or start the script inside a console an the script tell where to save the api key.
 
 ### TIP
 instead of using the standard python, use [pypy](https://pypy.org)   

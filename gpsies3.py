@@ -83,7 +83,7 @@ else:
 if ROA and errorcode:
 	droid.dialogDismiss()
 	title='Problem with API Key'
-	summary = '%s %s' % (APIKEY_FILE_PATH, errorstring)
+	summary = '%s' % (errorstring)
 	droid.dialogCreateAlert(title, summary)
 	droid.dialogSetPositiveButtonText('OK')
 	droid.dialogShow()
