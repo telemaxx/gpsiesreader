@@ -14,9 +14,10 @@ History:
 0.4 :runs on python2 and python3, module sl4a is now in androidhelper
 0.41 : support for different formats: GPX track, TCX Track, KML Google Earth
 0.43 : api key is now in an external file. MANY Code cleanup 4 going github
+0.44 : minor Changes
 """
 
-__version__ = '0.43'
+__version__ = '0.44'
 __author__ = 'telemaxx'
 
 import time
@@ -65,8 +66,16 @@ GPSIES_TRACKS_PATH = os.path.join(PATH,'tracks')
 
 if not os.path.exists(PATH):
 	os.makedirs(PATH)
+	if ROA:
+		title = 'created missing folder: %s' % PATH
+		droid.makeToast(title)
 if not os.path.exists(GPSIES_TRACKS_PATH):
 	os.makedirs(GPSIES_TRACKS_PATH)
+	if ROA:
+		title = 'created missing folder: %s' % GPSIES_TRACKS_PATH
+		droid.makeToast(title)
+
+
 
 errorcode = None
 errorstring = ''
@@ -285,7 +294,7 @@ def main():
 					title='I have loaded %d File(s) with totaly %dkm and %dhm' % (oks,totalkm,totalhm)
 					#droid.makeToast(title)
 					#droid.ttsSpeak(title)
-					summary = 'Filelocation: %s' % (PATH)
+					summary = 'Filelocation: %s' % (GPSIES_TRACKS_PATH)
 					droid.dialogCreateAlert(title, summary)
 					droid.dialogSetPositiveButtonText('OK')
 					droid.dialogShow()
@@ -296,7 +305,7 @@ def main():
 					print('total km: %.1f' % (totalkm))
 					print('total hm: %.1f' % (totalhm))
 					print('total trackpoint %d' % (totaltps))
-					print('downloadet to: %s' % (PATH))
+					print('downloadet to: %s' % (GPSIES_TRACKS_PATH))
 				status_xml_ok = 1		
 			else:
 				print('Status: %s' % ('canceled'))
