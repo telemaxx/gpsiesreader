@@ -11,13 +11,14 @@ return codes:
 2 = APIKEY File wrong file length
 
 History:
-0.4 :runs on python2 and python3, module sl4a is now in androidhelper
+0.40 :runs on python2 and python3, module sl4a is now in androidhelper
 0.41 : support for different formats: GPX track, TCX Track, KML Google Earth
 0.43 : api key is now in an external file. MANY Code cleanup 4 going github
 0.44 : minor Changes
+0.45 : better Qpython detection
 """
 
-__version__ = '0.44'
+__version__ = '0.45'
 __author__ = 'telemaxx'
 
 import time
@@ -26,12 +27,20 @@ import sys
 import re
 import xml.dom.minidom
 
-#try to detect android
+#try to detect QPython on android
 ROA = True
 try: #check if android and import gui tools
-	import androidhelper.sl4a as sl4a
-except: #otherwise its not android
+	import androidhelper.sl4a as sl4a # try new locaation
+except: #otherwise its not android or old location
+	#print('not qpython 3.6 or QPython 2')
 	ROA = None
+if not ROA:
+	ROA = True
+	try:
+		import sl4a # try old location
+	except:
+		#print('not qpython 3.2')
+		ROA = None
 
 python3 = True
 try: # for python3
