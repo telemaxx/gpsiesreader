@@ -16,9 +16,10 @@ History:
 0.43 : api key is now in an external file. MANY Code cleanup 4 going github
 0.44 : minor Changes
 0.45 : better Qpython detection
+0.46 : prepare for compressed networktransmission, gpsies seem not support it. Rename DEBUG to verbosity
 """
 
-__version__ = '0.45'
+__version__ = '0.46'
 __author__ = 'telemaxx'
 
 import time
@@ -53,7 +54,6 @@ GPSIES_USER='telamaxx'
 BASEURL = 'http://www.gpsies.com/api.do?'
 FILEFORMATS = ['gpxTrk', 'tcx', 'kml']
 FILEFORMATS_EXT = ['gpx', 'tcx', 'kml']
-DEBUG = 1 # Debug output [0,1]
 DEFAUL_ALL_SELECTED = 0 #in tracklist default all items selected? [0,1]
 PS=os.sep
 
@@ -113,7 +113,8 @@ elif not ROA and errorcode:
 
 
 def main():
-	global GPSIES_USER
+	global GPSIES_USER, verbosity
+	verbosity = 0 # Debug output [0,1]
 	selected_Items = 0 # default for non ROA
 	filetype = FILEFORMATS[selected_Items]
 	file_ext = FILEFORMATS_EXT[selected_Items]
@@ -276,8 +277,12 @@ def main():
 					# receiving file by file
 					ok = 1
 					try:
-						#response = urllib.request.urlopen(mytracks[p][2])
-						response = urlopen(mytracks[p][2])
+						request = Request(mytracks[p][2])
+						#request.add_header('Accept-encoding', 'gzip')
+						#response = urlopen(mytracks[p][2])
+						response = urlopen(request)
+						content_encoding = response.headers.get('Content-Encoding')
+						Dprint('encoding %s' % (content_encoding))
 					except:
 						ok = 0
 						failed += 1	
@@ -348,7 +353,7 @@ def main():
 		print('result: %s' % (message))
 
 def Dprint(text2print):
-	if DEBUG:
+	if verbosity:
 		print(text2print)
 
 def getText(nodelist):
