@@ -17,9 +17,10 @@ History:
 0.44 : minor Changes
 0.45 : better Qpython detection
 0.46 : prepare for compressed networktransmission, gpsies seem not support it. Rename DEBUG to verbosity
+0.47 : when user dialog is canceled, terminate and dont ask for fileformat
 """
 
-__version__ = '0.46'
+__version__ = '0.47'
 __author__ = 'telemaxx'
 
 import time
@@ -84,8 +85,6 @@ if not os.path.exists(GPSIES_TRACKS_PATH):
 		title = 'created missing folder: %s' % GPSIES_TRACKS_PATH
 		droid.makeToast(title)
 
-
-
 errorcode = None
 errorstring = ''
 if os.path.isfile(APIKEY_FILE_PATH):
@@ -114,7 +113,7 @@ elif not ROA and errorcode:
 
 def main():
 	global GPSIES_USER, verbosity
-	verbosity = 0 # Debug output [0,1]
+	verbosity = 1 # Debug output [0,1]
 	selected_Items = 0 # default for non ROA
 	filetype = FILEFORMATS[selected_Items]
 	file_ext = FILEFORMATS_EXT[selected_Items]
@@ -132,22 +131,23 @@ def main():
 		else:
 			status_user_cancel = 1
 		Dprint('username is: %s' % (GPSIES_USER))
-
-		title = 'select format'
-		droid.dialogCreateAlert(title)
-		droid.dialogSetSingleChoiceItems(FILEFORMATS)
-		droid.dialogSetPositiveButtonText('OK')
-		droid.dialogShow()
-		response = droid.dialogGetResponse().result
-		selected_Items = droid.dialogGetSelectedItems().result
-		Dprint(selected_Items)
-		filetype = FILEFORMATS[selected_Items[0]]
-		file_ext = FILEFORMATS_EXT[selected_Items[0]]
-		Dprint('selected Format is %s' % (filetype))
 	else:
-		Dprint('Android (qpython) not detectet')
+		Dprint('Android (qpython) not detectet, using %s' % GPSIES_USER)
 
 	if not status_user_cancel:
+		if ROA:
+			title = 'select format'
+			droid.dialogCreateAlert(title)
+			droid.dialogSetSingleChoiceItems(FILEFORMATS)
+			droid.dialogSetPositiveButtonText('OK')
+			droid.dialogShow()
+			response = droid.dialogGetResponse().result
+			selected_Items = droid.dialogGetSelectedItems().result
+			Dprint(selected_Items)
+			filetype = FILEFORMATS[selected_Items[0]]
+			file_ext = FILEFORMATS_EXT[selected_Items[0]]
+			Dprint('selected Format is %s' % (filetype))
+	
 		#trying to get xml File vie rest api, containing the tracks. filetype=tcx or filetype=gpxTrk
 		URL = BASEURL+'key='+apikey+'&username='+GPSIES_USER+'&limit=100&filetype='+filetype
 		try:
