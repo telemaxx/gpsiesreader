@@ -3,8 +3,8 @@
 ### The GPSies Reader Tool
 with this tool you can easily download GPS Tracks from GPSies.com  
 I made it for Mobile Phones to have a small network footprint.  
-The first version was running on **Python for Symbian**.   
-Later i ported it to **QPython on Android**.   
+The first version was running on **Python for Symbian**.  
+Later i ported it to **QPython on Android**.  
 For test purposes it can also run on Linux, Windows etc  
 On Android, you can select the track you wish to download and enter a username  
 On PC, all tracks are downloaded, the username must be set inside the python file.  
