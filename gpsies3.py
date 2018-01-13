@@ -57,6 +57,7 @@ FILEFORMATS = ['gpxTrk', 'tcx', 'kml']
 FILEFORMATS_EXT = ['gpx', 'tcx', 'kml']
 DEFAUL_ALL_SELECTED = 0 #in tracklist default all items selected? [0,1]
 PS=os.sep
+verbosity = 0 # Debug output [0,1]
 
 # Defining Android PATH:
 ANDROID_PATH = os.path.abspath(os.path.join(os.sep,'sdcard','oruxmaps','tracklogs','gpsies'))
@@ -113,7 +114,6 @@ elif not ROA and errorcode:
 
 def main():
 	global GPSIES_USER, verbosity
-	verbosity = 1 # Debug output [0,1]
 	selected_Items = 0 # default for non ROA
 	filetype = FILEFORMATS[selected_Items]
 	file_ext = FILEFORMATS_EXT[selected_Items]
