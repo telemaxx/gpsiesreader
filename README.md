@@ -32,12 +32,7 @@ PCPATH = os.path.join(HOME,'public','gps','gpsies')
 
 ### HOWTO install the API Key
 * at http://www.gpsies.com you can request an API Key:
-* create a empty text File and store the 16 Digit Key to.
-* copy this File to the path defined above, or start the script inside a console an the script tell where to save the api key.
+* create a empty text File with name: `apikey.txt` and copy the 16 Digit Key to.
+* copy this File to the PATH defined above, or start the script inside a console an the script tell you where to save the api key file.
 
-### TIP
-instead of using the standard python, use [pypy](https://pypy.org)  
-With pypy the script runs about 5 times faster  
-startup time is longer, but after that is faster  
-On Windows, there is only the python2 compliant 32bit version. but that version is ok  
 
