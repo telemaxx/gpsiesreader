@@ -19,13 +19,15 @@ History:
 0.46 : prepare for compressed networktransmission, gpsies seem not support it. Rename DEBUG to verbosity
 0.47 : when user dialog is canceled, terminate and dont ask for fileformat
 0.48 : tabs to spaces
+0.49 : 2 targets selectable, eg: oruxmaps and/or downloads
 """
 
-__version__ = '0.48'
+__version__ = '0.49'
 __author__ = 'telemaxx'
 
 import time
 import os.path
+import shutil
 import sys
 import re
 import xml.dom.minidom
@@ -58,23 +60,29 @@ FILEFORMATS = ['gpxTrk', 'tcx', 'kml']
 FILEFORMATS_EXT = ['gpx', 'tcx', 'kml']
 DEFAUL_ALL_SELECTED = 0 #in tracklist default all items selected? [0,1]
 PS=os.sep
+TARGET2ALL = 0
+TARGET2DOWNLOADFOLDER = 1
+TARGET2ORUXFOLDER = 2
+target_id = 0
 verbosity = 0 # Debug output [0,1]
 
-# Defining Android PATH:
-ANDROID_PATH = os.path.abspath(os.path.join(os.sep,'sdcard','oruxmaps','tracklogs','gpsies'))
+# Defining Android PATHS:
+ANDROID_PATH_ORUX = os.path.abspath(os.path.join(os.sep,'sdcard','oruxmaps','tracklogs','gpsies'))
+ANDROID_PATH_DOWNLOAD = os.path.abspath(os.path.join(os.sep,'sdcard','download'))
+ANDROID_PATH = ANDROID_PATH_ORUX
 # Defining Windows/Linux/Mac Path:
 HOME = os.path.expanduser('~')
 PCPATH = os.path.join(HOME,'public','gps','gpsies')
 
 # ROA = 1
 if ROA:
-    PATH = ANDROID_PATH #if is Android, then set Patheseperator and the path to Oruxmaps.
+    PATH = ANDROID_PATH_DOWNLOAD #if is Android, then set Pathseperator and the path to download
     droid = sl4a.Android()
 else:
     PATH = PCPATH
 GPSIES_XML_FILE_PATH = os.path.join(PATH,'GPSies.xml')
 APIKEY_FILE_PATH = os.path.join(PATH, 'apikey.txt')
-GPSIES_TRACKS_PATH = os.path.join(PATH,'tracks')
+GPSIES_TRACKS_PATH = PATH #os.path.join(PATH,'tracks')
 
 if not os.path.exists(PATH):
     os.makedirs(PATH)
@@ -114,7 +122,7 @@ elif not ROA and errorcode:
 
 
 def main():
-    global GPSIES_USER, verbosity
+    global GPSIES_USER, verbosity, target_id
     selected_Items = 0 # default for non ROA
     filetype = FILEFORMATS[selected_Items]
     file_ext = FILEFORMATS_EXT[selected_Items]
@@ -148,7 +156,31 @@ def main():
             filetype = FILEFORMATS[selected_Items[0]]
             file_ext = FILEFORMATS_EXT[selected_Items[0]]
             Dprint('selected Format is %s' % (filetype))
-    
+
+            # Target folder Dialog:
+            title = 'Targetfolder'
+            droid.dialogCreateAlert(title)
+            # droid.dialogSetMultiChoiceItems(my_name_list, my_select_list)
+            droid.dialogSetPositiveButtonText('Oruxmapsfolder')
+            droid.dialogSetNegativeButtonText('Downloadfolder')
+            droid.dialogSetNeutralButtonText('BOTH')
+            droid.dialogShow()
+            response = droid.dialogGetResponse().result
+            selected_Items = droid.dialogGetSelectedItems().result
+            Dprint('response: %s #selected: %s laenge: %d' % (response,selected_Items,len(selected_Items)))
+            if response['which'] == 'positive':
+                # store in orux path
+                Dprint('Oruxfolder %s' % (ANDROID_PATH_ORUX))
+                target_id = TARGET2ORUXFOLDER
+            elif response['which'] == 'negative':
+                # store in download path
+                Dprint('Downloadfolder %s' % (ANDROID_PATH_DOWNLOAD))
+                target_id = TARGET2DOWNLOADFOLDER
+                #ANDROID_PATH = ANDROID_PATH_DOWNLOAD
+            else:
+                Dprint('Download to both')
+                target_id = TARGET2ALL
+            Dprint('target_id: %d' % (target_id))
         #trying to get xml File vie rest api, containing the tracks. filetype=tcx or filetype=gpxTrk
         URL = BASEURL+'key='+apikey+'&username='+GPSIES_USER+'&limit=100&filetype='+filetype
         try:
@@ -258,7 +290,8 @@ def main():
                 else:
                     Dprint('no Tracks for user xy')
                     download = 0
-            Dprint('download und xmlok: %d %d' % (download,xml_ok))     
+            Dprint('download und xmlok: %d %d' % (download,xml_ok))
+            Dprint('target_id II: %d' % (target_id))
             if download and xml_ok:
                 n = len(mytracks)
                 Dprint('DL_list count %d' % n)
@@ -294,6 +327,14 @@ def main():
                         my_gpx_file = open(GPSIES_TRACKS_PATH+PS+mytracks[p][1],'wb')
                         my_gpx_file.write(response.read())
                         my_gpx_file.close()
+                    				
+                        if ROA and target_id == TARGET2ORUXFOLDER:
+                            Dprint('moving file from %s to %s' % (GPSIES_TRACKS_PATH+PS+mytracks[p][1], ANDROID_PATH_ORUX))
+                            shutil.move(GPSIES_TRACKS_PATH+PS+mytracks[p][1],ANDROID_PATH_ORUX + PS+mytracks[p][1])
+                        elif ROA and target_id == TARGET2ALL:
+                            Dprint('copy file from %s to %s' % (GPSIES_TRACKS_PATH+PS+mytracks[p][1], ANDROID_PATH_ORUX))
+                            shutil.copy(GPSIES_TRACKS_PATH+PS+mytracks[p][1],ANDROID_PATH_ORUX + PS+mytracks[p][1])
+    
                         totalkm += mytracks[p][3]
                         totaltps += mytracks[p][4]
                         totalhm += mytracks[p][5]
@@ -307,9 +348,17 @@ def main():
                 if ROA:
                     droid.dialogDismiss()
                     title='I have loaded %d File(s) with totaly %dkm and %dhm' % (oks,totalkm,totalhm)
-                    #droid.makeToast(title)
-                    #droid.ttsSpeak(title)
-                    summary = 'Filelocation: %s' % (GPSIES_TRACKS_PATH)
+                    Dprint('target_ID III: %d' % (target_id))
+                    if target_id == TARGET2ORUXFOLDER:
+                        Dprint('oruxloc : %d' % (ANDROID_PATH_ORUX))
+                        summary = 'Filelocation: %s' % (ANDROID_PATH_ORUX)
+                    elif target_id == TARGET2ALL:
+                        Dprint('ALLloc : %s + %s' % (ANDROID_PATH_ORUX, ANDROID_PATH_DOWNLOAD))
+                        summary = 'Fileloc.: %s + %s' % (ANDROID_PATH_ORUX, ANDROID_PATH_DOWNLOAD)
+                    else:
+                        Dprint('downloadloc : %d' % (ANDROID_PATH_DOWNLOAD))
+                        summary = 'Filelocation: %s' % (ANDROID_PATH_DOWNLOAD)
+                        
                     droid.dialogCreateAlert(title, summary)
                     droid.dialogSetPositiveButtonText('OK')
                     droid.dialogShow()
@@ -340,6 +389,7 @@ def main():
 
             
     if ROA:
+	
         Dprint('result: %s' % (message))
         #cd = 2
         #droid.dialogCreateHorizontalProgress(message,'waiting to quit',cd)
