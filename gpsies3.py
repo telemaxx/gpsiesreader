@@ -56,8 +56,8 @@ except ImportError: # or python2
 
 GPSIES_USER='telamaxx'
 BASEURL = 'http://www.gpsies.com/api.do?'
-FILEFORMATS = ['gpxTrk', 'tcx', 'kml']
-FILEFORMATS_EXT = ['gpx', 'tcx', 'kml']
+FILEFORMATS = ['fit', 'gpxTrk', 'tcx', 'kml']
+FILEFORMATS_EXT = ['fit', 'gpx', 'tcx', 'kml']
 DEFAUL_ALL_SELECTED = 0 #in tracklist default all items selected? [0,1]
 PS=os.sep
 TARGET2ALL = 0
