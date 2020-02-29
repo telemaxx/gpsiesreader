@@ -22,6 +22,7 @@ History:
 0.49 : 2 targets selectable, eg: oruxmaps and/or downloads
 """
 
+
 __version__ = '0.49'
 __author__ = 'telemaxx'
 
